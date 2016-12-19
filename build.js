@@ -10,7 +10,7 @@ const email = require("emailjs");
 // CONSTANTS
 const CONFIG_FILE_PATH = "./config.json";
 const DEFAULT_MUSESCORE_EXE_PATH_WINDOWS = "C:\\Program Files (x86)\\MuseScore 2\\bin\\MuseScore.exe";
-const DEFAULT_MUSESCORE_EXE_PATH_MAC = ""; // To be verified and entered
+const DEFAULT_MUSESCORE_EXE_PATH_MAC = "/Applications/MuseScore\ 2.app/Contents/MacOS/mscore";
 const SOURCE_PATH = "./src/";
 const BUILD_PATH = "build/";
 const BUILD_FILE_PDF = "build/Hymnal.pdf";
@@ -78,28 +78,31 @@ fs.remove(BUILD_PATH, function() {
       log(error);
     }
 
-    // Send to Kindle
-    log("Sending to Kindle at: " + config.email.kindleEmailAddress + "...");
-    const emailServer = email.server.connect({
-      user: config.email.smtpUser,
-      password: config.email.smtpPassword,
-      host: config.email.smtpServer,
-      ssl: config.email.smtpSsl
-    });
+    if (config.email) {
 
-    const message = email.message.create({
-      to: config.email.kindleEmailAddress,
-      from: config.email.fromAddress,
-      text: "",
-      subject: "Hymnal",
-      attachment: [{
-        path: BUILD_FILE_PDF,
-        type: "application/pdf",
-        name: "hymnal.pdf"
-      }]
-    });
+      // Send to Kindle
+      log("Sending to Kindle at: " + config.email.kindleEmailAddress + "...");
+      const emailServer = email.server.connect({
+        user: config.email.smtpUser,
+        password: config.email.smtpPassword,
+        host: config.email.smtpServer,
+        ssl: config.email.smtpSsl
+      });
 
-    emailServer.send(message, (error, message) => log(error || "\nDone!"));
+      const message = email.message.create({
+        to: config.email.kindleEmailAddress,
+        from: config.email.fromAddress,
+        text: "",
+        subject: "Hymnal",
+        attachment: [{
+          path: BUILD_FILE_PDF,
+          type: "application/pdf",
+          name: "hymnal.pdf"
+        }]
+      });
+
+      emailServer.send(message, (error, message) => log(error || "\nDone!"));
+    }
   });
 });
 
