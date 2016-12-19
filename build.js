@@ -5,7 +5,6 @@ const osType = require("os").type;
 const fs = require("fs-extra");
 const execFileSync = require("child_process").execFileSync;
 const pdfMerge = require("easy-pdf-merge");
-const ebookConvert = require("ebook-convert");
 const email = require("emailjs");
 
 // CONSTANTS
@@ -79,34 +78,28 @@ fs.remove(BUILD_PATH, function() {
       log(error);
     }
 
-    // Convert to Ebook
-    const epub = getMobiConverter(BUILD_FILE_PDF, BUILD_FILE_MOBI);
-    log("Converting to MOBI...");
-    epub.on("exit", () => {
-
-      // Send to Kindle
-      log("Sending to Kindle at: " + config.email.kindleEmailAddress + "...");
-      const emailServer = email.server.connect({
-        user: config.email.smtpUser,
-        password: config.email.smtpPassword,
-        host: config.email.smtpServer,
-        ssl: config.email.smtpSsl
-      });
-
-      const message = email.message.create({
-        to: config.email.kindleEmailAddress,
-        from: config.email.fromAddress,
-        text: "",
-        subject: "Hymnal",
-        attachment: [{
-          path: BUILD_FILE_MOBI,
-          type: "application/mobi+zip",
-          name: "hymnal.mobi"
-        }]
-      });
-
-      emailServer.send(message, (error, message) => log(error || "\nDone!"));
+    // Send to Kindle
+    log("Sending to Kindle at: " + config.email.kindleEmailAddress + "...");
+    const emailServer = email.server.connect({
+      user: config.email.smtpUser,
+      password: config.email.smtpPassword,
+      host: config.email.smtpServer,
+      ssl: config.email.smtpSsl
     });
+
+    const message = email.message.create({
+      to: config.email.kindleEmailAddress,
+      from: config.email.fromAddress,
+      text: "",
+      subject: "Hymnal",
+      attachment: [{
+        path: BUILD_FILE_MOBI,
+        type: "application/mobi+zip",
+        name: "hymnal.mobi"
+      }]
+    });
+
+    emailServer.send(message, (error, message) => log(error || "\nDone!"));
   });
 });
 
@@ -114,15 +107,4 @@ fs.remove(BUILD_PATH, function() {
 
 function generateExportedPDFFileName(fileName) {
   return BUILD_PATH + fileName.split(".mscz")[0] + ".pdf";
-}
-
-function getMobiConverter(source, destination) {
-  return ebookConvert({
-    source: source,
-    target: destination,
-    arguments: [
-      ['--authors', 'Joel Pan'],
-      ['--title', 'The New Hymnal']
-    ]
-  });
 }
