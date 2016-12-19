@@ -1,3 +1,11 @@
 {
-  "path": "C:\Program Files (x86)\MuseScore 2\\bin\MuseScore.exe"
+  "path": "C:\\Program Files (x86)\\MuseScore 2\\bin\\MuseScore.exe",
+  "email": {
+    "smtpServer": "smtp.gmail.com",
+    "smtpSsl": true,
+    "smtpUser": "email@gmail.com",
+    "smtpPassword": "",
+    "kindleEmailAddress": "you@kindle.com",
+    "fromAddress": "email@gmail.com"
+  }
 }
