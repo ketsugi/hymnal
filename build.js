@@ -63,10 +63,12 @@ fs.remove(BUILD_PATH, function() {
   fs.mkdirs(BUILD_PATH);
 
   listOfMSCZFiles.forEach((fileName) => {
-    const exportFileName = generateExportedPDFFileName(fileName);
-    log("Converting " + fileName + "...");
+    if (fileName[0] !== '.') {
+      const exportFileName = generateExportedPDFFileName(fileName);
+      log("Converting " + fileName + "...");
 
-    execFileSync(config.path, ["-o", exportFileName, SOURCE_PATH + fileName]);
+      execFileSync(config.path, ["-o", exportFileName, SOURCE_PATH + fileName]);
+    }
   });
 
   // Get list of PDF files
