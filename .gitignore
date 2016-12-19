@@ -41,3 +41,6 @@ config.json
 
 # Build folder
 build
+
+# MuseScore temp files
+src/.*
