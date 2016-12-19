@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ketsugi/hymnal#readme",
   "dependencies": {
     "easy-pdf-merge": "^0.1.3",
+    "ebook-convert": "^1.0.0",
     "fs-extra": "^1.0.0"
   }
 }
