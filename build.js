@@ -93,9 +93,9 @@ fs.remove(BUILD_PATH, function() {
       text: "",
       subject: "Hymnal",
       attachment: [{
-        path: BUILD_FILE_MOBI,
-        type: "application/mobi+zip",
-        name: "hymnal.mobi"
+        path: BUILD_FILE_PDF,
+        type: "application/pdf",
+        name: "hymnal.pdf"
       }]
     });
 
