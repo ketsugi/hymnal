@@ -1,16 +1,14 @@
-'use strict';
-
 // Library imports
-const osType = require("os").type;
-const fs = require("fs-extra");
-const execFileSync = require("child_process").execFileSync;
-const pdfMerge = require("easy-pdf-merge");
-const email = require("emailjs");
+import { type as osType } from 'os';
+import fs from 'fs-extra';
+import { execFileSync } from 'child_process';
+import pdfMerge from 'easy-pdf-merge';
+import { SMTPClient } from 'emailjs';
 
 // CONSTANTS
 const CONFIG_FILE_PATH = "./config.json";
 const DEFAULT_MUSESCORE_EXE_PATH_WINDOWS = "C:\\Program Files (x86)\\MuseScore 2\\bin\\MuseScore.exe";
-const DEFAULT_MUSESCORE_EXE_PATH_MAC = "/Applications/MuseScore\ 2.app/Contents/MacOS/mscore";
+const DEFAULT_MUSESCORE_EXE_PATH_MAC = "/Applications/MuseScore\ 4.app/Contents/MacOS/mscore";
 const SOURCE_PATH = "./src/";
 const BUILD_PATH = "build/";
 const BUILD_FILE_PDF = "build/Hymnal.pdf";
@@ -50,7 +48,7 @@ try {
 }
 catch (e) {
   log("File not found at " + config.path);
-  return;
+  exit();
 }
 
 /* Convert MuseScore files to PDFs */
@@ -84,14 +82,14 @@ fs.remove(BUILD_PATH, function() {
 
       // Send to Kindle
       log("Sending to Kindle at: " + config.email.kindleEmailAddress + "...");
-      const emailServer = email.server.connect({
+      const client = new SMTPClient({
         user: config.email.smtpUser,
         password: config.email.smtpPassword,
         host: config.email.smtpServer,
         ssl: config.email.smtpSsl
       });
 
-      const message = email.message.create({
+      const message = {
         to: config.email.kindleEmailAddress,
         from: config.email.fromAddress,
         text: "",
@@ -101,9 +99,9 @@ fs.remove(BUILD_PATH, function() {
           type: "application/pdf",
           name: "hymnal.pdf"
         }]
-      });
+      };
 
-      emailServer.send(message, (error, message) => log(error || "\nDone!"));
+      client.send(message, (error, message) => log(error || "\nDone!"));
     }
   });
 });
